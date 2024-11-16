@@ -1,3 +1,5 @@
 
 /model
 /save_data
+param_data/model.iter-100
+pre-trained/model.iter-100

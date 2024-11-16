@@ -31,12 +31,15 @@ def main(args):
     model = NPVAE.Chem_VAE(args.x_size, args.h_size, args.mid_size, args.z_dim, 0, len(labels), args.max_iter, labels, None, None, None, None, None, args.device, "test", n_trial = args.n_trial, test3D = not(args.only2D))
     #Loading parameters
     load_path = args.load_path + '/model.iter-{}'.format(args.load_epoch)
-    state_dict = torch.load(load_path)
+    state_dict = torch.load(load_path, map_location=torch.device(args.device))
     new_state_dict = OrderedDict()
     for k, v in state_dict.items():
         name = k.replace('module.', '')
-        new_state_dict[name] = v
-    model.load_state_dict(new_state_dict)
+        if name in model.state_dict() and model.state_dict()[name].size() == v.size():
+            new_state_dict[name] = v
+        else:
+            print(f"Skipping loading for layer {name} due to size mismatch.")
+    model.load_state_dict(new_state_dict, strict=False)
     model.eval()
     model = model.to(args.device)
     #Generation

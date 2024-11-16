@@ -36,7 +36,8 @@ def main(args):
     
     #Loading parameters
     load_path = args.load_path + '/model.iter-{}'.format(args.load_epoch)
-    state_dict = torch.load(load_path)
+    map_location = torch.device(args.device)  # Map to correct device
+    state_dict = torch.load(load_path, map_location=map_location)  # Use map_location
     new_state_dict = OrderedDict()
     for k, v in state_dict.items():
         name = k.replace('module.', '')
